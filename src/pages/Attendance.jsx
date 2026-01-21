@@ -1,5 +1,7 @@
 // File: src/pages/Attendance.jsx
-import React, { useState, useEffect } from 'react';
+// FIXED VERSION - No ESLint warnings
+
+import React, { useState, useEffect, useCallback } from 'react';
 import { Clock, Calendar, Filter, X, Plus } from 'lucide-react';
 import { attendanceAPI, employeeAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -12,7 +14,7 @@ const Attendance = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState(''); // 'add', 'edit', 'delete'
+  const [modalType, setModalType] = useState('');
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [error, setError] = useState('');
 
@@ -35,19 +37,14 @@ const Attendance = () => {
     notes: '',
   });
 
-  useEffect(() => {
-    loadData();
-  }, [filters]);
-
-  const loadData = async () => {
+  // Use useCallback to memoize loadData function
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       
-      // Load attendance with filters
       const attendanceResponse = await attendanceAPI.getAll(filters);
       setAttendance(attendanceResponse.data.data || attendanceResponse.data);
 
-      // Load employees if admin
       if (user?.role === 'admin') {
         const employeesResponse = await employeeAPI.getAll();
         setEmployees(employeesResponse.data.data || employeesResponse.data);
@@ -60,7 +57,11 @@ const Attendance = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, user?.role]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const openModal = (type, record = null) => {
     setModalType(type);
@@ -108,7 +109,6 @@ const Attendance = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
-    // If employee is selected, auto-fill employee name
     if (name === 'employeeId') {
       const employee = employees.find((emp) => emp.employeeId === value);
       setFormData((prev) => ({
@@ -342,6 +342,7 @@ const Attendance = () => {
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading attendance records...</p>
             </div>
           ) : attendance.length === 0 ? (
             <div className="text-center py-12">
@@ -459,7 +460,6 @@ const Attendance = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full">
             <div className="p-6">
-              {/* Modal Header */}
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold text-gray-800">
                   {modalType === 'add' && 'Mark Attendance'}
@@ -474,7 +474,6 @@ const Attendance = () => {
                 </button>
               </div>
 
-              {/* Delete Confirmation */}
               {modalType === 'delete' ? (
                 <div>
                   <p className="text-gray-600 mb-6">
@@ -498,7 +497,6 @@ const Attendance = () => {
                   </div>
                 </div>
               ) : (
-                /* Add/Edit Form */
                 <div className="space-y-4">
                   {error && (
                     <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
