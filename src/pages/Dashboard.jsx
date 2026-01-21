@@ -14,12 +14,7 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
- useEffect(() => {
-  const fetchStats = async () => {
-    await loadStats();
-  };
-  fetchStats();
-}, [user]); 
+
 
   const loadStats = async () => {
     try {
@@ -46,7 +41,12 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
-
+ useEffect(() => {
+  const fetchStats = async () => {
+    await loadStats();
+  };
+  fetchStats();
+}, [user]); 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />

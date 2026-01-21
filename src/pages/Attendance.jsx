@@ -35,12 +35,7 @@ const Attendance = () => {
     notes: '',
   });
 
- useEffect(() => {
-  const fetchData = async () => {
-    await loadData();
-  };
-  fetchData();
-}, [filters]); 
+
 
   const loadData = async () => {
     try {
@@ -64,6 +59,10 @@ const Attendance = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+  loadData();
+}, [filters, loadData]);
 
   const openModal = (type, record = null) => {
     setModalType(type);

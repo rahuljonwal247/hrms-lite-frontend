@@ -27,10 +27,7 @@ const Employees = () => {
     status: 'active',
   });
 
-  useEffect(() => {
-    loadEmployees();
-  }, []);
-
+ 
   const loadEmployees = async () => {
     try {
       setLoading(true);
@@ -44,6 +41,11 @@ const Employees = () => {
       setLoading(false);
     }
   };
+
+   useEffect(() => {
+    loadEmployees();
+  }, []);
+
 
   const openModal = (type, employee = null) => {
     setModalType(type);
