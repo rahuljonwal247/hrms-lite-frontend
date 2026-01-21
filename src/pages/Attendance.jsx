@@ -1,6 +1,6 @@
 // File: src/pages/Attendance.jsx
-import React, { useState, useEffect, useCallback } from 'react';
-import { Clock, Calendar, Filter, X, Plus } from 'lucide-react';
+import  { useState, useEffect, useCallback } from 'react';
+import {  Calendar, Filter, Plus } from 'lucide-react';
 import { attendanceAPI, employeeAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/Layout/Header';
@@ -11,7 +11,7 @@ const Attendance = () => {
   const [attendance, setAttendance] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [error, setError] = useState('');
@@ -91,11 +91,11 @@ const Attendance = () => {
       });
     }
 
-    setShowModal(true);
+    // setShowModal(true);
   };
 
   const closeModal = () => {
-    setShowModal(false);
+    // setShowModal(false);
     setSelectedRecord(null);
     setFormData({
       employeeId: '',
