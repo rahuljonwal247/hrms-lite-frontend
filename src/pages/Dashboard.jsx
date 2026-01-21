@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Users, Check, X } from 'lucide-react';
 import { employeeAPI, attendanceAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -7,20 +7,20 @@ import Navigation from '../components/Layout/Navigation';
 
 const Dashboard = () => {
   const { user } = useAuth();
+
   const [stats, setStats] = useState({
     totalEmployees: 0,
     presentToday: 0,
     absentToday: 0,
   });
+
   const [loading, setLoading] = useState(true);
 
-
-
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     try {
       if (user?.role === 'admin') {
         const today = new Date().toISOString().split('T')[0];
-        
+
         const [employeesRes, attendanceRes] = await Promise.all([
           employeeAPI.getAll(),
           attendanceAPI.getAll({ date: today }),
@@ -31,8 +31,12 @@ const Dashboard = () => {
 
         setStats({
           totalEmployees: employees.length,
-          presentToday: attendance.filter((a) => a.status === 'present').length,
-          absentToday: attendance.filter((a) => a.status === 'absent').length,
+          presentToday: attendance.filter(
+            (a) => a.status === 'present'
+          ).length,
+          absentToday: attendance.filter(
+            (a) => a.status === 'absent'
+          ).length,
         });
       }
     } catch (error) {
@@ -40,13 +44,12 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
- useEffect(() => {
-  const fetchStats = async () => {
-    await loadStats();
-  };
-  fetchStats();
-}, [user]); 
+  }, [user]);
+
+  useEffect(() => {
+    loadStats();
+  }, [loadStats]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -66,7 +69,9 @@ const Dashboard = () => {
             <div className="bg-white p-6 rounded-xl shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Total Employees</p>
+                  <p className="text-sm text-gray-600 mb-1">
+                    Total Employees
+                  </p>
                   <p className="text-3xl font-bold text-gray-800">
                     {stats.totalEmployees}
                   </p>
@@ -80,7 +85,9 @@ const Dashboard = () => {
             <div className="bg-white p-6 rounded-xl shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Present Today</p>
+                  <p className="text-sm text-gray-600 mb-1">
+                    Present Today
+                  </p>
                   <p className="text-3xl font-bold text-green-600">
                     {stats.presentToday}
                   </p>
@@ -94,7 +101,9 @@ const Dashboard = () => {
             <div className="bg-white p-6 rounded-xl shadow-sm border">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Absent Today</p>
+                  <p className="text-sm text-gray-600 mb-1">
+                    Absent Today
+                  </p>
                   <p className="text-3xl font-bold text-red-600">
                     {stats.absentToday}
                   </p>
@@ -107,7 +116,10 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="bg-white p-8 rounded-xl shadow-sm border text-center">
-            <Users size={48} className="mx-auto text-indigo-600 mb-4" />
+            <Users
+              size={48}
+              className="mx-auto text-indigo-600 mb-4"
+            />
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               Employee Dashboard
             </h3>
