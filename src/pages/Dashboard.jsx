@@ -14,9 +14,12 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadStats();
-  }, [user]);
+ useEffect(() => {
+  const fetchStats = async () => {
+    await loadStats();
+  };
+  fetchStats();
+}, [user]); 
 
   const loadStats = async () => {
     try {

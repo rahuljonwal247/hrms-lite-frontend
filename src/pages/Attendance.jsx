@@ -35,9 +35,12 @@ const Attendance = () => {
     notes: '',
   });
 
-  useEffect(() => {
-    loadData();
-  }, [filters]);
+ useEffect(() => {
+  const fetchData = async () => {
+    await loadData();
+  };
+  fetchData();
+}, [filters]); 
 
   const loadData = async () => {
     try {
